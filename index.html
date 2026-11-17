@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobList4U.us - Find Employment Opportunities</title>
+
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: #f5f7fa;
+    color: #333;
+}
+
+header {
+    background: #0d47a1;
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,.1);
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-box input {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px;
+}
+
+.search-box button {
+    padding: 12px 20px;
+    background: #1565c0;
+    color: white;
+    border: 0;
+    cursor: pointer;
+}
+
+.job {
+    border-left: 5px solid #1565c0;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.job h3 {
+    margin-top: 0;
+}
+
+.job-meta {
+    color: #666;
+    font-size: .9em;
+}
+
+.badge {
+    display: inline-block;
+    background: #e3f2fd;
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+footer {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.code {
+    background: #f4f4f4;
+    padding: 10px;
+    overflow: auto;
+    font-family: monospace;
+}
+
+ul li {
+    margin-bottom: 6px;
+}
+
+@media(max-width:768px){
+    .search-box{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>JobList4U.us</h1>
+    <p>Find Employment Opportunities Across the United States</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Search Jobs</h2>
+
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Search jobs, employer, location, keyword">
+            <button onclick="searchJobs()">Search</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Current Opportunities</h2>
+        <div id="jobs">
+            Loading jobs...
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Submit a Job Posting</h2>
+
+        <p>
+            Employers may submit employment opportunities to:
+            <strong>submission@joblist4u.us</strong>
+        </p>
+
+        <h3>Review Process</h3>
+
+        <ul>
+            <li>All submissions are manually reviewed before publication.</li>
+            <li>JobList4U.us reserves the right to reject or remove postings.</li>
+            <li>Fraudulent, misleading, discriminatory, or unlawful postings are prohibited.</li>
+            <li>Jobs must comply with applicable federal, state, and local employment laws.</li>
+            <li>Positions may be removed upon expiration or employer request.</li>
+        </ul>
+
+        <h3>Required Submission Information</h3>
+
+        <ul>
+            <li>Employer legal name</li>
+            <li>Employer website</li>
+            <li>Business address</li>
+            <li>Hiring contact name</li>
+            <li>Contact email or application URL</li>
+            <li>Job title</li>
+            <li>Job description</li>
+            <li>Location</li>
+            <li>Employment type</li>
+            <li>Compensation details</li>
+            <li>Application deadline</li>
+            <li>Start date</li>
+        </ul>
+
+        <h3>Compliance Requirements</h3>
+
+        <ul>
+            <li>Compliance with FLSA wage and hour requirements.</li>
+            <li>No deceptive earnings claims.</li>
+            <li>Compensation disclosure where required by state law.</li>
+            <li>Equal Employment Opportunity compliance.</li>
+            <li>No discriminatory hiring practices.</li>
+            <li>No pyramid schemes or multi-level marketing opportunities.</li>
+            <li>No positions violating federal or state law.</li>
+            <li>Independent contractor positions must be clearly identified.</li>
+            <li>Remote positions must identify work authorization requirements.</li>
+        </ul>
+
+    </div>
+
+    <div class="card">
+        <h2>JSON Job Feed Specification</h2>
+
+        <p>
+            Jobs are stored in a structured JSON file for publication.
+        </p>
+
+<div class="code">
+<pre>{
+  "id":"2026-0001",
+  "submissionDate":"2026-05-01",
+  "startDate":"2026-06-01",
+  "endDate":"2026-09-01",
+  "jobTitle":"Software Engineer",
+  "role":"Engineering",
+  "employmentType":"Full-Time",
+  "location":"Dallas, TX",
+  "remote":"Hybrid",
+  "employer":"ABC Corporation",
+  "employerWebsite":"https://example.com",
+  "employerAddress":"123 Main St, Dallas TX",
+  "contactName":"Jane Smith",
+  "contactEmail":"jobs@example.com",
+  "applyUrl":"https://example.com/careers",
+  "description":"Build web applications.",
+  "experienceLevel":"Mid-Level",
+  "payType":"Salary",
+  "payAmountMin":"90000",
+  "payAmountMax":"120000",
+  "currency":"USD",
+  "benefits":"Medical, Dental, Vision",
+  "equalOpportunityEmployer":true,
+  "workAuthorization":"US Authorized",
+  "status":"Approved"
+}</pre>
+</div>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>
+        © 2026 PRESSPAGE ENTERTAINMENT INC dba HIRE ME FOR WORK |
+        Employment listings are reviewed for policy compliance prior to publication.
+    </p>
+</footer>
+
+<script>
+
+let allJobs = [];
+
+async function loadJobs() {
+
+    try {
+
+        const response = await fetch('jobs.json');
+
+        allJobs = await response.json();
+
+        displayJobs(allJobs);
+
+    } catch (e) {
+
+        document.getElementById('jobs').innerHTML =
+            '<p>No jobs currently available.</p>';
+
+    }
+}
+
+function displayJobs(jobs) {
+
+    const container = document.getElementById('jobs');
+
+    if (jobs.length === 0) {
+
+        container.innerHTML =
+            '<p>No matching jobs found.</p>';
+
+        return;
+    }
+
+    container.innerHTML = jobs.map(job => `
+        <div class="job">
+
+            <h3>${job.jobTitle}</h3>
+
+            <div class="job-meta">
+                <span class="badge">${job.employer}</span>
+                <span class="badge">${job.location}</span>
+                <span class="badge">${job.employmentType}</span>
+            </div>
+
+            <p>${job.description}</p>
+
+            <p>
+                <strong>Compensation:</strong>
+                ${job.payType}
+                ${job.payAmountMin || ''}
+                ${job.payAmountMax ? '- ' + job.payAmountMax : ''}
+                ${job.currency || 'USD'}
+            </p>
+
+            <p>
+                <strong>Apply:</strong>
+                <a href="${job.applyUrl}" target="_blank">
+                    Submit Application
+                </a>
+            </p>
+
+        </div>
+    `).join('');
+}
+
+function searchJobs() {
+
+    let search =
+        document.getElementById('search')
+        .value.toLowerCase();
+
+    let results = allJobs.filter(job =>
+
+        JSON.stringify(job)
+        .toLowerCase()
+        .includes(search)
+
+    );
+
+    displayJobs(results);
+}
+
+loadJobs();
+
+</script>
+
+</body>
+</html>
